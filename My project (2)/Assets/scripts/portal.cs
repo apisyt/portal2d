@@ -5,7 +5,7 @@ public class Portal : MonoBehaviour
 {
     private HashSet<GameObject> portalObjects = new HashSet<GameObject>();
 
-    [SerializeField] private Transform destination;
+    [SerializeField] public Transform destination;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
