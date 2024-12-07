@@ -489,7 +489,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 1.97
+  orthographic size: 3.65
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -694,8 +694,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.5, y: 1}
+  m_Offset: {x: 0, y: -0.027888149}
+  m_Size: {x: 0.5, y: 0.6653418}
   m_Direction: 0
 --- !u!50 &1779862482
 Rigidbody2D:
@@ -765,7 +765,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: b2e4a11ba5e5b2744b0f24969fc46e4a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0ffd05a5075935c4a98d5faf29e6d02a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -834,7 +834,7 @@ Transform:
   m_GameObject: {fileID: 1803988163}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.301, z: 0}
+  m_LocalPosition: {x: 0, y: -0.34, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -879,7 +879,7 @@ MonoBehaviour:
   m_Follow: {fileID: 1779862485}
   m_Lens:
     FieldOfView: 60
-    OrthographicSize: 1.97
+    OrthographicSize: 3.65
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
