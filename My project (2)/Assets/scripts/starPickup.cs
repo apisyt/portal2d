@@ -4,26 +4,36 @@ using UnityEngine.UI; // Umo¿liwia obs³ugê UI
 public class StarPickup : MonoBehaviour
 {
     public Text starCounterText;  // Referencja do licznika w UI
-    private int starCount = 0;    // Zmienna do zliczania gwiazdek
+    public AudioClip pickupSound; // DŸwiêk podnoszenia gwiazdki
+
+    private int starCount = 0;    // Liczba zebranych gwiazdek
+    private AudioSource audioSource; // Komponent AudioSource
 
     private void Start()
     {
+        // Dodanie komponentu AudioSource do obiektu Gracza
+        audioSource = gameObject.AddComponent<AudioSource>();
         UpdateStarCounter();
     }
 
-    // Funkcja wywo³ywana, gdy obiekt wejdzie w trigger
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Pickup")) // Sprawdzenie, czy wszed³eœ w itemek
+        if (other.CompareTag("Pickup")) // Sprawdzenie, czy to gwiazdka
         {
             starCount++; // Dodaj gwiazdkê do licznika
-            UpdateStarCounter(); // Zaktualizuj UI licznika
+            UpdateStarCounter(); // Aktualizacja UI
 
-            Destroy(other.gameObject); // Usuñ zebrany przedmiot z poziomu
+            // Odtworzenie dŸwiêku
+            if (pickupSound != null)
+            {
+                audioSource.PlayOneShot(pickupSound);
+            }
+
+            Destroy(other.gameObject); // Usuñ gwiazdkê z poziomu
         }
     }
 
-    // Funkcja aktualizuj¹ca licznik gwiazdek w UI
+    // Aktualizacja tekstu w liczniku gwiazdek
     private void UpdateStarCounter()
     {
         if (starCounterText != null)
@@ -32,3 +42,4 @@ public class StarPickup : MonoBehaviour
         }
     }
 }
+
