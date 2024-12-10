@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 1909217000425698918}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.329, z: 0}
+  m_LocalPosition: {x: 0, y: -0.498, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -147,6 +147,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5281770b644d1df41ba38960a66c79e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 7
+  jumpingPower: 8
   rb: {fileID: 4982249060597633078}
   groundCheck: {fileID: 2079336838495717558}
   groundLayer:
@@ -227,6 +229,6 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.002774924, y: -0.022199273}
-  m_Size: {x: 0.4124573, y: 0.59560144}
+  m_Offset: {x: -0.012693554, y: -0.042036563}
+  m_Size: {x: 0.590993, y: 0.93944794}
   m_Direction: 0
