@@ -11,32 +11,19 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
 
-    private int jumpCount = 0;       // Licznik skoków
-    [SerializeField] private int maxJumps = 2;  // Maksymalna liczba skoków
-    private bool isGrounded;         // Czy gracz dotyka ziemi
+    private bool isGrounded; // Czy gracz jest na ziemi
 
     void Update()
     {
         horizontal = Input.GetAxisRaw("Horizontal");
 
-        // Sprawdzanie czy gracz dotyka ziemi
-        if (IsGrounded() && !isGrounded)
-        {
-            isGrounded = true;
-            jumpCount = 0; // Reset skoków tylko raz po dotkniêciu ziemi
-        }
-        else if (!IsGrounded())
-        {
-            isGrounded = false;
-        }
-
-        // Logika skakania
-        if (Input.GetButtonDown("Jump") && jumpCount < maxJumps)
+        // Sprawdzanie czy gracz mo¿e skoczyæ
+        if (Input.GetButtonDown("Jump") && IsGrounded())
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
-            jumpCount++; // Zwiêksz licznik skoków
         }
 
+        // Skracanie skoku, jeœli przycisk zosta³ puszczony
         if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
@@ -52,6 +39,7 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsGrounded()
     {
+        // Sprawdza, czy gracz jest na ziemi za pomoc¹ OverlapCircle
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 
