@@ -148,12 +148,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 7
-  jumpingPower: 8
+  jumpingPower: 16
   rb: {fileID: 4982249060597633078}
   groundCheck: {fileID: 2079336838495717558}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  dashSpeed: 20
+  dashDuration: 0.2
+  dashCooldown: 1
+  coyoteTime: 0.2
+  increasedGravity: 20
+  normalGravity: 2
 --- !u!114 &2150523678791398382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185,7 +191,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 2
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2

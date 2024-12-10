@@ -11,35 +11,89 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
 
-    private bool isGrounded; // Czy gracz jest na ziemi
+    [SerializeField] private float dashSpeed = 20f;
+    [SerializeField] private float dashDuration = 0.2f;
+    [SerializeField] private float dashCooldown = 1f;
+    private float dashCooldownTimer = 0f;
+    private bool isDashing = false;
+
+    [SerializeField] private float coyoteTime = 0.2f;
+    private float coyoteTimeCounter = 0f;
+
+    // Nowe zmienne na mechanikê zwiêkszonej grawitacji
+    [SerializeField] private float increasedGravity = 10f; // Zwiêkszona grawitacja podczas naciœniêcia 'S'
+    [SerializeField] private float normalGravity = 3f; // Normalna grawitacja
+    private bool isPressingS = false;
+
+    private bool canDoubleJump = false;
 
     void Update()
     {
         horizontal = Input.GetAxisRaw("Horizontal");
 
-        // Sprawdzanie czy gracz mo¿e skoczyæ
-        if (Input.GetButtonDown("Jump") && IsGrounded())
+        if (IsGrounded())
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+            coyoteTimeCounter = coyoteTime;
+            canDoubleJump = true;  // Mo¿emy wykonaæ podwójny skok, gdy jesteœmy na ziemi
+        }
+        else
+        {
+            coyoteTimeCounter -= Time.deltaTime;
         }
 
-        // Skracanie skoku, jeœli przycisk zosta³ puszczony
+        if (Input.GetButtonDown("Jump") && coyoteTimeCounter > 0f)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+            coyoteTimeCounter = 0f;
+            canDoubleJump = true;  // Mo¿emy wykonaæ podwójny skok po pierwszym skoku
+        }
+        else if (Input.GetButtonDown("Jump") && !IsGrounded() && canDoubleJump)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, jumpingPower); // Podwójny skok
+            canDoubleJump = false;  // Tylko jeden podwójny skok
+        }
+
         if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
         }
 
+        if (Input.GetKeyDown(KeyCode.LeftShift) && dashCooldownTimer <= 0f)
+        {
+            StartCoroutine(Dash());
+        }
+
+        if (dashCooldownTimer > 0f)
+        {
+            dashCooldownTimer -= Time.deltaTime;
+        }
+
+        // Sprawdzanie, czy przytrzymujemy "S"
+        isPressingS = Input.GetKey(KeyCode.S);
+
         Flip();
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
-        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+        // Zmiana grawitacji w zale¿noœci od tego, czy trzymamy "S"
+        if (isPressingS)
+        {
+            rb.gravityScale = increasedGravity;
+        }
+        else
+        {
+            rb.gravityScale = normalGravity;
+        }
+
+        if (!isDashing)
+        {
+            rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+        }
     }
 
     private bool IsGrounded()
     {
-        // Sprawdza, czy gracz jest na ziemi za pomoc¹ OverlapCircle
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 
@@ -52,5 +106,22 @@ public class PlayerMovement : MonoBehaviour
             localScale.x *= -1f;
             transform.localScale = localScale;
         }
+    }
+
+    private System.Collections.IEnumerator Dash()
+    {
+        isDashing = true;
+        dashCooldownTimer = dashCooldown;
+
+        float originalGravity = rb.gravityScale;
+        rb.gravityScale = 0f;
+
+        float dashDirection = isFacingRight ? 1f : -1f;
+        rb.velocity = new Vector2(dashDirection * dashSpeed, 0f);
+
+        yield return new WaitForSeconds(dashDuration);
+
+        rb.gravityScale = originalGravity;
+        isDashing = false;
     }
 }
