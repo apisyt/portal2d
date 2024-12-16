@@ -190,6 +190,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  currentHealth: 0
 --- !u!70 &4898022131384958143
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -199,7 +200,7 @@ CapsuleCollider2D:
   m_GameObject: {fileID: 8180368574720018307}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: f7568412ff578044b819062d2f4c20c2, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

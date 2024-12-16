@@ -123,7 +123,7 @@ CapsuleCollider2D:
   m_GameObject: {fileID: 126094049244584670}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: f7568412ff578044b819062d2f4c20c2, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -146,8 +146,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.009299278, y: -0.017045945}
-  m_Size: {x: 0.37346458, y: 0.39515835}
+  m_Offset: {x: 0.019217491, y: -0.017045945}
+  m_Size: {x: 0.5586109, y: 0.5586109}
   m_Direction: 0
 --- !u!114 &3974990106130531173
 MonoBehaviour:
@@ -164,8 +164,8 @@ MonoBehaviour:
   patrolPoints:
   - {fileID: 0}
   - {fileID: 0}
-  patrolSpeed: 2
-  detectionRange: 5
+  patrolSpeed: 4
+  detectionRange: 6
   attackRange: 1
   damage: 20
   attackCooldown: 2
