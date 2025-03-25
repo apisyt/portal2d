@@ -1,21 +1,27 @@
 using UnityEngine;
 
-public class TeleportPlayer2D : MonoBehaviour
+public class killbox : MonoBehaviour
 {
-    // Publiczne pole, które pozwala na ustawienie pozycji teleportacji w inspektorze
-    [SerializeField] private Vector3 teleportPosition = new Vector3(0, 0, 0);
+    [Header("Ustawienia obra¿eñ")]
+    public int damage = 100; // Iloœæ obra¿eñ, które zadaje poci¹g
 
-    // Funkcja wywo³ywana, gdy inny Collider2D wejdzie w trigger
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Sprawdzamy, czy obiekt, który wszed³ w trigger, ma tag "Player"
+        // Sprawdzenie, czy obiekt ma tag "Player"
         if (other.CompareTag("Player"))
         {
-            // Teleportujemy gracza do ustawionej pozycji
-            other.transform.position = teleportPosition;
+            // Pobranie komponentu PlayerHealth z obiektu gracza
+            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
 
-            // Wypisujemy komunikat do konsoli (opcjonalnie)
-            Debug.Log($"Gracz zosta³ teleportowany do {teleportPosition}!");
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(damage); // Zadaj obra¿enia graczowi
+                Debug.Log("Poci¹g zada³ graczowi " + damage + " obra¿eñ!");
+            }
+            else
+            {
+                Debug.LogWarning("Obiekt gracza nie ma komponentu PlayerHealth!");
+            }
         }
     }
 }

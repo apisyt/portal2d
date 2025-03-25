@@ -6,6 +6,8 @@ public class PlayerHealth : MonoBehaviour
     public int maxHealth = 100; // Maksymalne HP
     public int currentHealth; // Aktualne HP
 
+    private Vector3 lastCheckpoint; // Pozycja ostatniego checkpointu
+
     // Definicja eventu, który bêdzie wywo³ywany, gdy zdrowie gracza siê zmieni
     public delegate void HealthChanged(int currentHealth, int maxHealth);
     public event HealthChanged OnHealthChanged;
@@ -13,6 +15,7 @@ public class PlayerHealth : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth; // Ustawiamy pocz¹tkowe zdrowie na maksymalne
+        LoadCheckpoint(); // £adujemy zapisany checkpoint
     }
 
     void Update()
@@ -46,7 +49,37 @@ public class PlayerHealth : MonoBehaviour
     // Metoda wywo³ywana, gdy gracz umiera (czyli gdy HP spada do 0)
     private void Die()
     {
-        Debug.Log("Gracz umar³! Resetowanie sceny...");
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name); // £aduje ponownie scenê
+        Debug.Log("Gracz umar³! Powrót na checkpoint: " + lastCheckpoint);
+        transform.position = lastCheckpoint; // Przeniesienie gracza do ostatniego checkpointu
+        currentHealth = maxHealth; // Przywrócenie pe³nego zdrowia
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
+
+    // Metoda do ustawiania checkpointu
+    public void SetCheckpoint(Vector3 checkpointPosition)
+    {
+        lastCheckpoint = checkpointPosition;
+        PlayerPrefs.SetFloat("CheckpointX", checkpointPosition.x);
+        PlayerPrefs.SetFloat("CheckpointY", checkpointPosition.y);
+        PlayerPrefs.SetFloat("CheckpointZ", checkpointPosition.z);
+        PlayerPrefs.Save();
+        Debug.Log("Nowy checkpoint zapisany: " + lastCheckpoint);
+    }
+
+    // Metoda do ³adowania checkpointu
+    private void LoadCheckpoint()
+    {
+        if (PlayerPrefs.HasKey("CheckpointX"))
+        {
+            lastCheckpoint = new Vector3(
+                PlayerPrefs.GetFloat("CheckpointX"),
+                PlayerPrefs.GetFloat("CheckpointY"),
+                PlayerPrefs.GetFloat("CheckpointZ")
+            );
+        }
+        else
+        {
+            lastCheckpoint = transform.position; // Jeœli brak zapisu, ustaw aktualn¹ pozycjê
+        }
     }
 }
