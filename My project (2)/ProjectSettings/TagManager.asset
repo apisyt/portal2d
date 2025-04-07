@@ -42,6 +42,18 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: w ciul
+    uniqueID: 919882367
+    locked: 0
+  - name: "t\u0142o daleko"
+    uniqueID: 119710317
+    locked: 0
+  - name: "t\u0142o nie a\u017C tak daleko"
+    uniqueID: 1607229791
+    locked: 0
+  - name: "t\u0142o norm"
+    uniqueID: 1510674465
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
