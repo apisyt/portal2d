@@ -24,6 +24,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float increasedGravity = 10f; // Zwiêkszona grawitacja podczas naciœniêcia 'S'
     [SerializeField] private float normalGravity = 3f; // Normalna grawitacja
     private bool isPressingS = false;
+    public bool isWalking = false;
+    [SerializeField] private Animator animator;
+
+
 
     private bool canDoubleJump = false;
 
@@ -72,6 +76,10 @@ public class PlayerMovement : MonoBehaviour
         isPressingS = Input.GetKey(KeyCode.S);
 
         Flip();
+        // Ustawianie isWalking i parametru Animatora
+        isWalking = Mathf.Abs(horizontal) > 0.01f && IsGrounded() && !isDashing;
+        animator.SetBool("isWalking", isWalking);
+
     }
 
     void FixedUpdate()
