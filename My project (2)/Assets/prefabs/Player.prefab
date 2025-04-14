@@ -185,6 +185,7 @@ MonoBehaviour:
   greenPortalPrefab: {fileID: 5384894437951352555, guid: 22d0e561147208c458241a8b7ce44ade, type: 3}
   spawnBlueKey: 323
   spawnGreenKey: 324
+  starPickup: {fileID: 8210442459305538509}
 --- !u!114 &7742573362470502913
 MonoBehaviour:
   m_ObjectHideFlags: 0

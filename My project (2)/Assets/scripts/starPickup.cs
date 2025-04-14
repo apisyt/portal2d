@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI; // Umo¿liwia obs³ugê UI
+using UnityEngine.UI;
 
 public class StarPickup : MonoBehaviour
 {
@@ -7,33 +7,30 @@ public class StarPickup : MonoBehaviour
     public AudioClip pickupSound; // DŸwiêk podnoszenia gwiazdki
 
     private int starCount = 0;    // Liczba zebranych gwiazdek
-    private AudioSource audioSource; // Komponent AudioSource
+    private AudioSource audioSource;
 
     private void Start()
     {
-        // Dodanie komponentu AudioSource do obiektu Gracza
         audioSource = gameObject.AddComponent<AudioSource>();
         UpdateStarCounter();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Pickup")) // Sprawdzenie, czy to gwiazdka
+        if (other.CompareTag("Pickup"))
         {
-            starCount++; // Dodaj gwiazdkê do licznika
-            UpdateStarCounter(); // Aktualizacja UI
+            starCount++;
+            UpdateStarCounter();
 
-            // Odtworzenie dŸwiêku
             if (pickupSound != null)
             {
                 audioSource.PlayOneShot(pickupSound);
             }
 
-            Destroy(other.gameObject); // Usuñ gwiazdkê z poziomu
+            Destroy(other.gameObject);
         }
     }
 
-    // Aktualizacja tekstu w liczniku gwiazdek
     private void UpdateStarCounter()
     {
         if (starCounterText != null)
@@ -41,5 +38,16 @@ public class StarPickup : MonoBehaviour
             starCounterText.text = "Stars: " + starCount.ToString();
         }
     }
-}
 
+    // NOWA METODA – próbuj u¿yæ gwiazdkê
+    public bool TryUseStar()
+    {
+        if (starCount > 0)
+        {
+            starCount--;
+            UpdateStarCounter();
+            return true;
+        }
+        return false;
+    }
+}

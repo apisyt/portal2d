@@ -2,13 +2,14 @@ using UnityEngine;
 
 public class PortalSpawner : MonoBehaviour
 {
-    [SerializeField] private GameObject bluePortalPrefab; // Prefab niebieskiego portalu
-    [SerializeField] private GameObject greenPortalPrefab; // Prefab zielonego portalu
-    [SerializeField] private KeyCode spawnBlueKey = KeyCode.Mouse0; // Klawisz dla niebieskiego portalu (LPM)
-    [SerializeField] private KeyCode spawnGreenKey = KeyCode.Mouse1; // Klawisz dla zielonego portalu (PPM)
+    [SerializeField] private GameObject bluePortalPrefab;
+    [SerializeField] private GameObject greenPortalPrefab;
+    [SerializeField] private KeyCode spawnBlueKey = KeyCode.Mouse0;
+    [SerializeField] private KeyCode spawnGreenKey = KeyCode.Mouse1;
+    [SerializeField] private StarPickup starPickup; // Dodaj referencjê do skryptu gwiazdek
 
-    private GameObject lastBluePortal; // Ostatni niebieski portal
-    private GameObject lastGreenPortal; // Ostatni zielony portal
+    private GameObject lastBluePortal;
+    private GameObject lastGreenPortal;
 
     void Update()
     {
@@ -25,23 +26,24 @@ public class PortalSpawner : MonoBehaviour
 
     private void SpawnPortal(GameObject portalPrefab, ref GameObject lastPortal)
     {
-        // Pobierz pozycjê myszy w œwiecie
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z = 0; // Ustaw Z na 0, aby portal by³ w odpowiedniej p³aszczyŸnie
+        // SprawdŸ, czy mamy wystarczaj¹co gwiazdek
+        if (starPickup == null || !starPickup.TryUseStar())
+        {
+            Debug.Log("Brak gwiazdek – nie mo¿na postawiæ portalu!");
+            return;
+        }
 
-        // Usuñ poprzedni portal, jeœli istnieje
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePosition.z = 0;
+
         if (lastPortal != null)
         {
             Destroy(lastPortal);
         }
 
-        // Stwórz nowy portal
         GameObject newPortal = Instantiate(portalPrefab, mousePosition, Quaternion.identity);
-
-        // Zaktualizuj referencjê do ostatniego portalu
         lastPortal = newPortal;
 
-        // Ustaw po³¹czenie miêdzy portalami, jeœli istnieje portal drugiego koloru
         if (portalPrefab == bluePortalPrefab && lastGreenPortal != null)
         {
             LinkPortals(newPortal, lastGreenPortal);
