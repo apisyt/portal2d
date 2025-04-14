@@ -3,16 +3,33 @@ using UnityEngine.UI;
 
 public class StarPickup : MonoBehaviour
 {
-    public Text starCounterText;  // Referencja do licznika w UI
-    public AudioClip pickupSound; // DŸwiêk podnoszenia gwiazdki
+    public Text starCounterText;
+    public AudioClip pickupSound;
 
-    private int starCount = 0;    // Liczba zebranych gwiazdek
+    private int starCount = 0;
+    private int autoStarLimit = 6; // maksymalna liczba gwiazdek przez auto-regeneracjê
+    private float autoAddTimer = 10f; // co ile sekund dodaje siê gwiazdka
+    private float timer = 0f;
+
     private AudioSource audioSource;
 
     private void Start()
     {
         audioSource = gameObject.AddComponent<AudioSource>();
         UpdateStarCounter();
+    }
+
+    private void Update()
+    {
+        timer += Time.deltaTime;
+
+        // Co 30 sekund dodaj gwiazdkê, jeœli jest mniej ni¿ limit
+        if (timer >= autoAddTimer && starCount < autoStarLimit)
+        {
+            starCount++;
+            UpdateStarCounter();
+            timer = 0f;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -39,7 +56,6 @@ public class StarPickup : MonoBehaviour
         }
     }
 
-    // NOWA METODA – próbuj u¿yæ gwiazdkê
     public bool TryUseStar()
     {
         if (starCount > 0)
