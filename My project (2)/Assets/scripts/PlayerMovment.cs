@@ -77,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
 
         Flip();
         // Ustawianie isWalking i parametru Animatora
-        isWalking = Mathf.Abs(horizontal) > 0.01f && IsGrounded() && !isDashing;
+        isWalking = Mathf.Abs(horizontal) > 0.1f && IsGrounded() && !isDashing;
         animator.SetBool("isWalking", isWalking);
 
     }
