@@ -49,7 +49,6 @@ GameObject:
   - component: {fileID: 2194833238956056630}
   - component: {fileID: 5793479587174627666}
   - component: {fileID: 8479056009849210263}
-  - component: {fileID: 4404948310201263225}
   - component: {fileID: 8883219446763004743}
   - component: {fileID: 3683679035741214630}
   m_Layer: 0
@@ -302,60 +301,7 @@ MonoBehaviour:
   groundCheck: {fileID: 6632520001515259980}
   groundCheckRadius: 0.1
   landingVelocityThreshold: 4
-  impulseSource: {fileID: 4404948310201263225}
---- !u!114 &4404948310201263225
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4670290104296011309}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 180ecf9b41d478f468eb3e9083753217, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ImpulseDefinition:
-    m_ImpulseChannel: 1
-    m_ImpulseShape: 2
-    m_CustomImpulseShape:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    m_ImpulseDuration: 0.2
-    m_ImpulseType: 0
-    m_DissipationRate: 0.25
-    m_RawSignal: {fileID: 0}
-    m_AmplitudeGain: 1
-    m_FrequencyGain: 1
-    m_RepeatMode: 0
-    m_Randomize: 1
-    m_TimeEnvelope:
-      m_AttackShape:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      m_DecayShape:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      m_AttackTime: 0
-      m_SustainTime: 0.2
-      m_DecayTime: 0.7
-      m_ScaleWithImpact: 1
-      m_HoldForever: 0
-    m_ImpactRadius: 100
-    m_DirectionMode: 0
-    m_DissipationMode: 2
-    m_DissipationDistance: 100
-    m_PropagationSpeed: 343
-  m_DefaultVelocity: {x: 0, y: -1, z: 0}
+  impulseSource: {fileID: 0}
 --- !u!114 &8883219446763004743
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -390,19 +336,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ImpulseDefinition:
     m_ImpulseChannel: -1
-    m_ImpulseShape: 2
+    m_ImpulseShape: 0
     m_CustomImpulseShape:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -0.01651001
-        inSlope: 2
-        outSlope: 2
+        value: -0.052490234
+        inSlope: 0.68716013
+        outSlope: 0.68716013
         tangentMode: 0
         weightedMode: 0
         inWeight: 0
-        outWeight: 0
+        outWeight: 0.12559122
+      - serializedVersion: 3
+        time: 0.46596566
+        value: -0.06362146
+        inSlope: 0.70915717
+        outSlope: 0.70915717
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.03469018
       - serializedVersion: 3
         time: 1
         value: -0.051887512
