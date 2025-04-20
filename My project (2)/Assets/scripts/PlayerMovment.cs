@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -20,80 +21,83 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float coyoteTime = 0.2f;
     private float coyoteTimeCounter = 0f;
 
-    // Nowe zmienne na mechanikê zwiêkszonej grawitacji
-    [SerializeField] private float increasedGravity = 10f; // Zwiêkszona grawitacja podczas naciœniêcia 'S'
-    [SerializeField] private float normalGravity = 3f; // Normalna grawitacja
+    // Mechanika zwiêkszonej grawitacji
+    [SerializeField] private float increasedGravity = 10f;
+    [SerializeField] private float normalGravity = 3f;
     private bool isPressingS = false;
+
     public bool isWalking = false;
     [SerializeField] private Animator animator;
-
-
 
     private bool canDoubleJump = false;
 
     void Update()
     {
+        // Wejœcie poziome
         horizontal = Input.GetAxisRaw("Horizontal");
 
+        // Coyote time i reset podwójnego skoku
         if (IsGrounded())
         {
             coyoteTimeCounter = coyoteTime;
-            canDoubleJump = true;  // Mo¿emy wykonaæ podwójny skok, gdy jesteœmy na ziemi
+            canDoubleJump = true;
         }
         else
         {
             coyoteTimeCounter -= Time.deltaTime;
         }
 
+        // Skok i podwójny skok
         if (Input.GetButtonDown("Jump") && coyoteTimeCounter > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+            animator.SetTrigger("Jump");
             coyoteTimeCounter = 0f;
-            canDoubleJump = true;  // Mo¿emy wykonaæ podwójny skok po pierwszym skoku
+            canDoubleJump = true;
         }
         else if (Input.GetButtonDown("Jump") && !IsGrounded() && canDoubleJump)
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpingPower); // Podwójny skok
-            canDoubleJump = false;  // Tylko jeden podwójny skok
+            rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+            animator.SetTrigger("Jump");
+            canDoubleJump = false;
         }
 
+        // Skracanie skoku przy puszczeniu przycisku
         if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
         }
 
+        // Dash
         if (Input.GetKeyDown(KeyCode.LeftShift) && dashCooldownTimer <= 0f)
         {
             StartCoroutine(Dash());
         }
-
         if (dashCooldownTimer > 0f)
         {
             dashCooldownTimer -= Time.deltaTime;
         }
 
-        // Sprawdzanie, czy przytrzymujemy "S"
+        // Sprawdzanie przytrzymania S dla zwiêkszonej grawitacji
         isPressingS = Input.GetKey(KeyCode.S);
 
-        Flip();
-        // Ustawianie isWalking i parametru Animatora
-        isWalking = Mathf.Abs(horizontal) > 0.1f && IsGrounded() && !isDashing;
-        animator.SetBool("isWalking", isWalking);
+        // Ustawianie parametrów Animatora
+        bool grounded = IsGrounded();
+        animator.SetBool("isGrounded", grounded);
+        animator.SetBool("isFalling", rb.velocity.y < 0f && !grounded);
 
+        // Flip i chodzenie
+        Flip();
+        isWalking = Mathf.Abs(horizontal) > 0.1f && grounded && !isDashing;
+        animator.SetBool("isWalking", isWalking);
     }
 
     void FixedUpdate()
     {
-        // Zmiana grawitacji w zale¿noœci od tego, czy trzymamy "S"
-        if (isPressingS)
-        {
-            rb.gravityScale = increasedGravity;
-        }
-        else
-        {
-            rb.gravityScale = normalGravity;
-        }
+        // Grawitacja podczas przytrzymania S
+        rb.gravityScale = isPressingS ? increasedGravity : normalGravity;
 
+        // Ruch poziomy, pomijaj¹c dash
         if (!isDashing)
         {
             rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
@@ -107,7 +111,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Flip()
     {
-        if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
+        if ((isFacingRight && horizontal < 0f) || (!isFacingRight && horizontal > 0f))
         {
             isFacingRight = !isFacingRight;
             Vector3 localScale = transform.localScale;
@@ -116,7 +120,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator Dash()
+    private IEnumerator Dash()
     {
         isDashing = true;
         dashCooldownTimer = dashCooldown;
