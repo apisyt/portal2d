@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -21,23 +20,23 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float coyoteTime = 0.2f;
     private float coyoteTimeCounter = 0f;
 
-    // Mechanika zwiêkszonej grawitacji
     [SerializeField] private float increasedGravity = 10f;
     [SerializeField] private float normalGravity = 3f;
     private bool isPressingS = false;
-
     public bool isWalking = false;
+
     [SerializeField] private Animator animator;
 
     private bool canDoubleJump = false;
 
     void Update()
     {
-        // Wejœcie poziome
         horizontal = Input.GetAxisRaw("Horizontal");
 
-        // Coyote time i reset podwójnego skoku
-        if (IsGrounded())
+        bool grounded = IsGrounded();
+
+        // Coyote time
+        if (grounded)
         {
             coyoteTimeCounter = coyoteTime;
             canDoubleJump = true;
@@ -47,22 +46,21 @@ public class PlayerMovement : MonoBehaviour
             coyoteTimeCounter -= Time.deltaTime;
         }
 
-        // Skok i podwójny skok
+        // Skok z ziemi
         if (Input.GetButtonDown("Jump") && coyoteTimeCounter > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
-            animator.SetTrigger("Jump");
             coyoteTimeCounter = 0f;
             canDoubleJump = true;
         }
-        else if (Input.GetButtonDown("Jump") && !IsGrounded() && canDoubleJump)
+        // Double jump
+        else if (Input.GetButtonDown("Jump") && !grounded && canDoubleJump)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
-            animator.SetTrigger("Jump");
             canDoubleJump = false;
         }
 
-        // Skracanie skoku przy puszczeniu przycisku
+        // Skracanie skoku
         if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
@@ -73,31 +71,36 @@ public class PlayerMovement : MonoBehaviour
         {
             StartCoroutine(Dash());
         }
+
         if (dashCooldownTimer > 0f)
         {
             dashCooldownTimer -= Time.deltaTime;
         }
 
-        // Sprawdzanie przytrzymania S dla zwiêkszonej grawitacji
         isPressingS = Input.GetKey(KeyCode.S);
 
-        // Ustawianie parametrów Animatora
-        bool grounded = IsGrounded();
-        animator.SetBool("isGrounded", grounded);
-        animator.SetBool("isFalling", rb.velocity.y < 0f && !grounded);
-
-        // Flip i chodzenie
         Flip();
+
+        // Animacje
         isWalking = Mathf.Abs(horizontal) > 0.1f && grounded && !isDashing;
         animator.SetBool("isWalking", isWalking);
+        animator.SetBool("isGrounded", grounded);
+
+        // Jedna zmienna do animacji skoku i spadania
+        animator.SetBool("isJumping", !grounded);
     }
 
     void FixedUpdate()
     {
-        // Grawitacja podczas przytrzymania S
-        rb.gravityScale = isPressingS ? increasedGravity : normalGravity;
+        if (isPressingS)
+        {
+            rb.gravityScale = increasedGravity;
+        }
+        else
+        {
+            rb.gravityScale = normalGravity;
+        }
 
-        // Ruch poziomy, pomijaj¹c dash
         if (!isDashing)
         {
             rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
@@ -111,7 +114,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Flip()
     {
-        if ((isFacingRight && horizontal < 0f) || (!isFacingRight && horizontal > 0f))
+        if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
         {
             isFacingRight = !isFacingRight;
             Vector3 localScale = transform.localScale;
@@ -120,7 +123,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private IEnumerator Dash()
+    private System.Collections.IEnumerator Dash()
     {
         isDashing = true;
         dashCooldownTimer = dashCooldown;
