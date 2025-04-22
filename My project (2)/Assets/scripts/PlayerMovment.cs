@@ -31,11 +31,12 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // Pobranie wejœcia poziomego
         horizontal = Input.GetAxisRaw("Horizontal");
 
         bool grounded = IsGrounded();
 
-        // Coyote time
+        // Coyote Time i reset podwójnego skoku
         if (grounded)
         {
             coyoteTimeCounter = coyoteTime;
@@ -53,14 +54,14 @@ public class PlayerMovement : MonoBehaviour
             coyoteTimeCounter = 0f;
             canDoubleJump = true;
         }
-        // Double jump
+        // Double Jump
         else if (Input.GetButtonDown("Jump") && !grounded && canDoubleJump)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
             canDoubleJump = false;
         }
 
-        // Skracanie skoku
+        // Skracanie skoku przy puszczeniu przycisku
         if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
@@ -71,36 +72,31 @@ public class PlayerMovement : MonoBehaviour
         {
             StartCoroutine(Dash());
         }
-
         if (dashCooldownTimer > 0f)
         {
             dashCooldownTimer -= Time.deltaTime;
         }
 
+        // Zwiêkszona grawitacja przy przytrzymaniu 'S'
         isPressingS = Input.GetKey(KeyCode.S);
 
+        // Odwracanie kierunku sprite'a
         Flip();
 
-        // Animacje
+        // Ustawianie parametrów Animatora
         isWalking = Mathf.Abs(horizontal) > 0.1f && grounded && !isDashing;
         animator.SetBool("isWalking", isWalking);
         animator.SetBool("isGrounded", grounded);
-
-        // Jedna zmienna do animacji skoku i spadania
         animator.SetBool("isJumping", !grounded);
+        animator.SetBool("isDashing", isDashing);
     }
 
     void FixedUpdate()
     {
-        if (isPressingS)
-        {
-            rb.gravityScale = increasedGravity;
-        }
-        else
-        {
-            rb.gravityScale = normalGravity;
-        }
+        // Zmiana grawitacji
+        rb.gravityScale = isPressingS ? increasedGravity : normalGravity;
 
+        // Ruch poziomy (wy³¹czony podczas dashu)
         if (!isDashing)
         {
             rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
@@ -128,6 +124,9 @@ public class PlayerMovement : MonoBehaviour
         isDashing = true;
         dashCooldownTimer = dashCooldown;
 
+        // Start animacji dash
+        animator.SetBool("isDashing", true);
+
         float originalGravity = rb.gravityScale;
         rb.gravityScale = 0f;
 
@@ -136,7 +135,9 @@ public class PlayerMovement : MonoBehaviour
 
         yield return new WaitForSeconds(dashDuration);
 
+        // Przywrócenie stanu po dashu
         rb.gravityScale = originalGravity;
         isDashing = false;
+        animator.SetBool("isDashing", false);
     }
 }

@@ -232,8 +232,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.020746322, y: -0.042601474}
-  m_Size: {x: 0.36873797, y: 0.69144064}
+  m_Offset: {x: -0.020746313, y: -0.032828003}
+  m_Size: {x: 0.368738, y: 0.67189366}
   m_Direction: 0
 --- !u!50 &2194833238956056630
 Rigidbody2D:
@@ -409,6 +409,8 @@ MonoBehaviour:
   cooldown: 0.5
   projectileSpeed: 20
   projectileDamage: 30
+  shootDelay: 0.2
+  animator: {fileID: 5793479587174627666}
 --- !u!1 &6528089403672313834
 GameObject:
   m_ObjectHideFlags: 0
@@ -434,7 +436,7 @@ Transform:
   m_GameObject: {fileID: 6528089403672313834}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.156, y: -0.06, z: -0.017230509}
+  m_LocalPosition: {x: 0.305, y: 0.118, z: -0.017230509}
   m_LocalScale: {x: 0.59285, y: 0.59285, z: 0.59285}
   m_ConstrainProportionsScale: 0
   m_Children: []
