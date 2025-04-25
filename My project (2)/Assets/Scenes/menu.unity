@@ -203,7 +203,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7c2c0ae18c95604ea39bf6291632fcd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneToLoad: SampleScene
+  sceneToLoad: inttrovideo
 --- !u!1 &893107509
 GameObject:
   m_ObjectHideFlags: 0
