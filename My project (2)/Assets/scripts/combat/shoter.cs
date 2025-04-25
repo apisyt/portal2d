@@ -29,7 +29,6 @@ public class PlayerShooting : MonoBehaviour
         // Strza³ przy Q, z uwzglêdnieniem cooldown
         if (Input.GetKeyDown(KeyCode.Q) && Time.time >= lastShootTime + cooldown)
         {
-            // Uruchomienie opóŸnienia przed strza³em
             StartCoroutine(ShootWithDelay());
             lastShootTime = Time.time;
         }
@@ -37,8 +36,13 @@ public class PlayerShooting : MonoBehaviour
 
     private IEnumerator ShootWithDelay()
     {
-        // Wyzwolenie animacji strza³u
+        // 1) Zawsze odpalamy klasyczny trigger strza³u
         animator.SetTrigger("Shoot");
+
+        // 2) Je¿eli nie ma poziomego ruchu, dodatkowo odpalamy trigger ShotStand
+        float h = Input.GetAxisRaw("Horizontal");
+        if (Mathf.Approximately(h, 0f))
+            animator.SetTrigger("ShotStand");
 
         // OpóŸnienie przed wystrza³em
         yield return new WaitForSeconds(shootDelay);
