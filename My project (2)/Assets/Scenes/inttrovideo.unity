@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   videoPlayer: {fileID: 1304536574}
-  sceneToLoad: SampleScene
+  sceneToLoad: tutorial
 --- !u!4 &167207687
 Transform:
   m_ObjectHideFlags: 0
