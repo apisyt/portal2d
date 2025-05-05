@@ -167,7 +167,7 @@ MonoBehaviour:
   - {fileID: 0}
   patrolSpeed: 4
   detectionRange: 6
-  attackRange: 1
+  attackRange: 2
   damage: 20
   attackCooldown: 2
 --- !u!114 &7405535457512172980
@@ -182,4 +182,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9fcc4897878a554ba08665edfcfe10d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  maxHealth: 70
