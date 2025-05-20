@@ -1,11 +1,16 @@
 using UnityEngine;
+using UnityEngine.InputSystem; // U¿ywane do wibracji (wymaga nowego Input Systemu)
 
 public class EnemyHealth : MonoBehaviour
 {
     public int maxHealth = 100;
     private int currentHealth;
 
-    void Start()
+    [Header("Vibration Settings")]
+    public float vibrationIntensity = 0.5f; // 0.0 – 1.0
+    public float vibrationDuration = 0.3f; // sekundy
+
+    private void Start()
     {
         currentHealth = maxHealth;
     }
@@ -23,7 +28,20 @@ public class EnemyHealth : MonoBehaviour
 
     private void Die()
     {
-        // Mo¿esz dodaæ animacjê, efekty, itd.
+        // Wibracja na padzie
+        StartCoroutine(VibrateController(vibrationIntensity, vibrationDuration));
+
+        // Tu mo¿esz dorzuciæ efekt, dŸwiêk itp.
         Destroy(gameObject);
+    }
+
+    private System.Collections.IEnumerator VibrateController(float intensity, float duration)
+    {
+        if (Gamepad.current != null)
+        {
+            Gamepad.current.SetMotorSpeeds(intensity, intensity); // low + high freq
+            yield return new WaitForSeconds(duration);
+            Gamepad.current.SetMotorSpeeds(0f, 0f);
+        }
     }
 }

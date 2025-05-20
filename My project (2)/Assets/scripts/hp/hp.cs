@@ -12,6 +12,8 @@ public class PlayerHealth : MonoBehaviour
     public delegate void HealthChanged(int currentHealth, int maxHealth);
     public event HealthChanged OnHealthChanged;
 
+    private bool isDead = false;
+
     void Start()
     {
         currentHealth = maxHealth; // Ustawiamy pocz¹tkowe zdrowie na maksymalne
@@ -20,7 +22,7 @@ public class PlayerHealth : MonoBehaviour
 
     void Update()
     {
-        if (currentHealth <= 0)
+        if (!isDead && currentHealth <= 0)
         {
             Die(); // Jeœli zdrowie gracza spadnie do 0, wywo³aj metodê Die
         }
@@ -29,8 +31,13 @@ public class PlayerHealth : MonoBehaviour
     // Metoda do zadawania obra¿eñ
     public void TakeDamage(int damage)
     {
+        if (isDead) return;
+
         currentHealth -= damage; // Odejmuje obra¿enia od zdrowia
         if (currentHealth < 0) currentHealth = 0; // Zapewnia, ¿e zdrowie nie spadnie poni¿ej 0
+
+        // Wibracja przy otrzymaniu obra¿eñ (np. 0.5 mocy, 0.5 mocy, 0.2 sek)
+        VibrationManager.Instance.Vibrate(0.5f, 0.5f, 0.2f);
 
         // Wywo³anie eventu po zmianie zdrowia
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
@@ -39,6 +46,8 @@ public class PlayerHealth : MonoBehaviour
     // Metoda do leczenia gracza
     public void Heal(int amount)
     {
+        if (isDead) return;
+
         currentHealth += amount; // Dodaje zdrowie
         if (currentHealth > maxHealth) currentHealth = maxHealth; // Zapewnia, ¿e zdrowie nie przekroczy maksymalnego
 
@@ -49,10 +58,17 @@ public class PlayerHealth : MonoBehaviour
     // Metoda wywo³ywana, gdy gracz umiera (czyli gdy HP spada do 0)
     private void Die()
     {
+        isDead = true;
+
+        // Mega mocna d³uga wibracja przy œmierci (pe³na moc na 1 sekundê)
+        VibrationManager.Instance.Vibrate(1.0f, 1.0f, 1.0f);
+
         Debug.Log("Gracz umar³! Powrót na checkpoint: " + lastCheckpoint);
         transform.position = lastCheckpoint; // Przeniesienie gracza do ostatniego checkpointu
         currentHealth = maxHealth; // Przywrócenie pe³nego zdrowia
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
+
+        isDead = false; // Odblokuj mo¿liwoœæ dalszej gry (jeœli chcesz, mo¿esz tu dodaæ delay lub respawn)
     }
 
     // Metoda do ustawiania checkpointu

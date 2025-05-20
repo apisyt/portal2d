@@ -20,6 +20,9 @@ public class Portal : MonoBehaviour
         }
 
         collision.transform.position = destination.position;
+
+        // Dodaj krótk¹, wyczuwaln¹ wibracjê (np. 0.6f przez 0.2s)
+        VibrationManager.Instance.Vibrate(0.6f, 0.6f, 0.2f);
     }
 
     private void OnTriggerExit2D(Collider2D collision)

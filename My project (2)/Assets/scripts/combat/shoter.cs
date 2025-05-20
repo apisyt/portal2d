@@ -48,10 +48,13 @@ public class PlayerShooting : MonoBehaviour
             projectilePrefab,
             firePoint.position,
             Quaternion.identity
+
         );
 
         Projectile proj = projectile.GetComponent<Projectile>();
         int dir = isFacingRight ? 1 : -1;
         proj.Initialize(projectileSpeed * dir, projectileDamage);
+        VibrationManager.Instance.Vibrate(1.0f, 1.0f, 0.2f);
     }
+
 }

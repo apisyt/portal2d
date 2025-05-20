@@ -51,6 +51,7 @@ GameObject:
   - component: {fileID: 8883219446763004743}
   - component: {fileID: 3683679035741214630}
   - component: {fileID: 2213711861793333088}
+  - component: {fileID: 7472180270564697635}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -156,19 +157,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 8
   jumpingPower: 16
+  coyoteTime: 0.2
+  dashSpeed: 20
+  dashDuration: 0.2
+  dashCooldown: 1
+  normalGravity: 3
+  increasedGravity: 10
   rb: {fileID: 2194833238956056630}
   groundCheck: {fileID: 6632520001515259980}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  dashSpeed: 20
-  dashDuration: 0.2
-  dashCooldown: 1
-  coyoteTime: 0.2
-  increasedGravity: 10
-  normalGravity: 3
-  isWalking: 0
   animator: {fileID: 5793479587174627666}
+  isWalking: 0
 --- !u!114 &4247110274041148994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -406,11 +407,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 4142402395727097072, guid: d993293d53a7281428de8e503493906f, type: 3}
   firePoint: {fileID: 8429590770238080068}
-  cooldown: 0.5
+  cooldown: 0.2
   projectileSpeed: 20
-  projectileDamage: 30
-  shootDelay: 0.2
+  projectileDamage: 40
+  shootDelay: 0.3
   animator: {fileID: 5793479587174627666}
+--- !u!114 &7472180270564697635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4670290104296011309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07a4627131af0054fbe6ba01d2797d0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6528089403672313834
 GameObject:
   m_ObjectHideFlags: 0
