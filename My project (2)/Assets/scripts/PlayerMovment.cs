@@ -34,12 +34,10 @@ public class PlayerMovement : MonoBehaviour
     private bool isFacingRight = true;
     public bool isWalking;
 
-    void Update()
+    private void Update()
     {
-        // 1. Ruch poziomo (klawa + pad)
         horizontal = Input.GetAxisRaw("Horizontal");
 
-        // 2. Ground check + coyote time
         bool grounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
         if (grounded)
         {
@@ -51,25 +49,28 @@ public class PlayerMovement : MonoBehaviour
             coyoteTimeCounter -= Time.deltaTime;
         }
 
-        // 3. Skok + Double Jump
         if (Input.GetButtonDown("Jump") && coyoteTimeCounter > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
             coyoteTimeCounter = 0f;
+
+            // Wibracja przy skoku
+            VibrationManager.Instance.Vibrate(0.3f, 0.3f, 0.15f);
         }
         else if (Input.GetButtonDown("Jump") && !grounded && canDoubleJump)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
             canDoubleJump = false;
+
+            // Wibracja przy double jumpie
+            VibrationManager.Instance.Vibrate(0.35f, 0.35f, 0.15f);
         }
 
-        // 4. Skracanie skoku
         if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
         }
 
-        // 5. Dash (Left Shift lub L3)
         if ((Input.GetKeyDown(KeyCode.LeftShift) || Input.GetButtonDown("Dash"))
             && dashCooldownTimer <= 0f)
         {
@@ -77,12 +78,16 @@ public class PlayerMovement : MonoBehaviour
         }
         dashCooldownTimer = Mathf.Max(0f, dashCooldownTimer - Time.deltaTime);
 
-        // 6. Slam-down / szybki opad (S, kwadrat lub ga³ka w dó³)
         isPressingS = Input.GetKey(KeyCode.S)
                       || Input.GetButton("SlamDown")
                       || Input.GetAxisRaw("Vertical") < -0.5f;
 
-        // 7. Flip sprite
+        if (!grounded && isPressingS && rb.velocity.y < -1f)
+        {
+            // Slam-down wibracja (jednorazowo, jeœli chcesz j¹ ograniczyæ raz na wejœcie — daj mi znaæ)
+            VibrationManager.Instance.Vibrate(0.5f, 0.5f, 0.1f);
+        }
+
         if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
         {
             isFacingRight = !isFacingRight;
@@ -91,7 +96,6 @@ public class PlayerMovement : MonoBehaviour
             transform.localScale = s;
         }
 
-        // 8. Animator
         isWalking = Mathf.Abs(horizontal) > 0.1f && grounded && !isDashing;
         animator.SetBool("isWalking", isWalking);
         animator.SetBool("isGrounded", grounded);
@@ -99,12 +103,10 @@ public class PlayerMovement : MonoBehaviour
         animator.SetBool("isDashing", isDashing);
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        // 9. Gravity
         rb.gravityScale = isPressingS ? increasedGravity : normalGravity;
 
-        // 10. Movement (wy³¹czone podczas dashu)
         if (!isDashing)
             rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
     }
@@ -119,6 +121,9 @@ public class PlayerMovement : MonoBehaviour
         rb.gravityScale = 0f;
         float dir = isFacingRight ? 1f : -1f;
         rb.velocity = new Vector2(dir * dashSpeed, 0f);
+
+        // Dash wibracja
+        VibrationManager.Instance.Vibrate(0.7f, 0.7f, 0.2f);
 
         yield return new WaitForSeconds(dashDuration);
 

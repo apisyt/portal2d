@@ -23,7 +23,6 @@ public class StarPickup : MonoBehaviour
     {
         timer += Time.deltaTime;
 
-        // Co 30 sekund dodaj gwiazdkê, jeœli jest mniej ni¿ limit
         if (timer >= autoAddTimer && starCount < autoStarLimit)
         {
             starCount++;
@@ -43,6 +42,9 @@ public class StarPickup : MonoBehaviour
             {
                 audioSource.PlayOneShot(pickupSound);
             }
+
+            // Krótka, przyjemna wibracja (lekka moc, np. 0.4f przez 0.15s)
+            VibrationManager.Instance.Vibrate(0.4f, 0.4f, 0.15f);
 
             Destroy(other.gameObject);
         }

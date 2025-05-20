@@ -20,8 +20,17 @@ public class PlayerLandingImpulse : MonoBehaviour
 
         if (!wasGrounded && isGrounded && fallSpeed > landingVelocityThreshold)
         {
-            float strength = Mathf.InverseLerp(landingVelocityThreshold, 20f, fallSpeed); // 0–1 w zale¿noœci od prêdkoœci
+            // Oblicz si³ê impulsu kamery (0-1)
+            float strength = Mathf.InverseLerp(landingVelocityThreshold, 20f, fallSpeed);
+
+            // Generuj impuls kamery
             impulseSource.GenerateImpulse(strength);
+
+            // Oblicz si³ê wibracji proporcjonalnie do prêdkoœci l¹dowania
+            float vibrationStrength = Mathf.Lerp(0.3f, 1.0f, strength);
+
+            // Wywo³aj wibracjê (moc lewej i prawej strony taka sama, czas 0.15 s)
+            VibrationManager.Instance.Vibrate(vibrationStrength, vibrationStrength, 0.15f);
         }
 
         wasGrounded = isGrounded;
