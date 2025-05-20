@@ -1,33 +1,29 @@
 using UnityEngine;
-using System.Collections; // Dodajemy przestrzeñ nazw dla IEnumerator
+using System.Collections;
 
 public class PlayerShooting : MonoBehaviour
 {
     [Header("Strzelanie")]
     public GameObject projectilePrefab;
-    public Transform firePoint; // Miejsce pojawienia siê pocisku
+    public Transform firePoint;
     public float cooldown = 0.5f;
     public float projectileSpeed = 10f;
     public int projectileDamage = 10;
-    public float shootDelay = 0.2f; // OpóŸnienie przed strza³em (w sekundach)
+    public float shootDelay = 0.2f;
 
     [Header("Animator")]
     [SerializeField] private Animator animator;
 
     private float lastShootTime = 0f;
     private bool isFacingRight = true;
-    private bool isShooting = false;
 
     void Update()
     {
-        // Uaktualnienie kierunku patrzenia gracza
-        if (transform.localScale.x > 0f)
-            isFacingRight = true;
-        else if (transform.localScale.x < 0f)
-            isFacingRight = false;
+        // Uaktualnienie kierunku patrzenia
+        isFacingRight = transform.localScale.x > 0f;
 
-        // Strza³ przy Q, z uwzglêdnieniem cooldown
-        if (Input.GetKeyDown(KeyCode.Q) && Time.time >= lastShootTime + cooldown)
+        // Strza³ po naciœniêciu Q lub przycisku „Shoot”
+        if (Input.GetButtonDown("Shoot") && Time.time >= lastShootTime + cooldown)
         {
             StartCoroutine(ShootWithDelay());
             lastShootTime = Time.time;
@@ -36,24 +32,26 @@ public class PlayerShooting : MonoBehaviour
 
     private IEnumerator ShootWithDelay()
     {
-        // 1) Zawsze odpalamy klasyczny trigger strza³u
+        // 1) Trigger strza³u
         animator.SetTrigger("Shoot");
 
-        // 2) Je¿eli nie ma poziomego ruchu, dodatkowo odpalamy trigger ShotStand
+        // 2) Je¿eli stoi w miejscu, dodatkowo ShotStand
         float h = Input.GetAxisRaw("Horizontal");
         if (Mathf.Approximately(h, 0f))
             animator.SetTrigger("ShotStand");
 
-        // OpóŸnienie przed wystrza³em
+        // 3) OpóŸnienie
         yield return new WaitForSeconds(shootDelay);
 
-        // Tworzenie pocisku
-        Vector3 spawnPosition = firePoint.position;
-        GameObject projectile = Instantiate(projectilePrefab, spawnPosition, Quaternion.identity);
+        // 4) Wystrza³ pocisku
+        GameObject projectile = Instantiate(
+            projectilePrefab,
+            firePoint.position,
+            Quaternion.identity
+        );
 
-        // Ustawienie prêdkoœci i obra¿eñ pocisku
         Projectile proj = projectile.GetComponent<Projectile>();
-        int direction = isFacingRight ? 1 : -1;
-        proj.Initialize(projectileSpeed * direction, projectileDamage);
+        int dir = isFacingRight ? 1 : -1;
+        proj.Initialize(projectileSpeed * dir, projectileDamage);
     }
 }
