@@ -1,42 +1,46 @@
 using UnityEngine;
+using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private float horizontal;
+    [Header("Movement")]
     [SerializeField] private float speed = 8f;
+    private float horizontal;
+
+    [Header("Jumping")]
     [SerializeField] private float jumpingPower = 16f;
-    private bool isFacingRight = true;
+    [SerializeField] private float coyoteTime = 0.2f;
+    private float coyoteTimeCounter;
+    private bool canDoubleJump;
 
-    [SerializeField] private Rigidbody2D rb;
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private LayerMask groundLayer;
-
+    [Header("Dash")]
     [SerializeField] private float dashSpeed = 20f;
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 1f;
-    private float dashCooldownTimer = 0f;
-    private bool isDashing = false;
+    private float dashCooldownTimer;
+    private bool isDashing;
 
-    [SerializeField] private float coyoteTime = 0.2f;
-    private float coyoteTimeCounter = 0f;
-
-    [SerializeField] private float increasedGravity = 10f;
+    [Header("Gravity")]
     [SerializeField] private float normalGravity = 3f;
-    private bool isPressingS = false;
-    public bool isWalking = false;
+    [SerializeField] private float increasedGravity = 10f;
+    private bool isPressingS;
 
+    [Header("References")]
+    [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Animator animator;
 
-    private bool canDoubleJump = false;
+    private bool isFacingRight = true;
+    public bool isWalking;
 
     void Update()
     {
-        // Pobranie wejœcia poziomego
+        // 1. Ruch poziomo (klawa + pad)
         horizontal = Input.GetAxisRaw("Horizontal");
 
-        bool grounded = IsGrounded();
-
-        // Coyote Time i reset podwójnego skoku
+        // 2. Ground check + coyote time
+        bool grounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
         if (grounded)
         {
             coyoteTimeCounter = coyoteTime;
@@ -47,43 +51,47 @@ public class PlayerMovement : MonoBehaviour
             coyoteTimeCounter -= Time.deltaTime;
         }
 
-        // Skok z ziemi
+        // 3. Skok + Double Jump
         if (Input.GetButtonDown("Jump") && coyoteTimeCounter > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
             coyoteTimeCounter = 0f;
-            canDoubleJump = true;
         }
-        // Double Jump
         else if (Input.GetButtonDown("Jump") && !grounded && canDoubleJump)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
             canDoubleJump = false;
         }
 
-        // Skracanie skoku przy puszczeniu przycisku
+        // 4. Skracanie skoku
         if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
         }
 
-        // Dash
-        if (Input.GetKeyDown(KeyCode.LeftShift) && dashCooldownTimer <= 0f)
+        // 5. Dash (Left Shift lub L3)
+        if ((Input.GetKeyDown(KeyCode.LeftShift) || Input.GetButtonDown("Dash"))
+            && dashCooldownTimer <= 0f)
         {
             StartCoroutine(Dash());
         }
-        if (dashCooldownTimer > 0f)
+        dashCooldownTimer = Mathf.Max(0f, dashCooldownTimer - Time.deltaTime);
+
+        // 6. Slam-down / szybki opad (S, kwadrat lub ga³ka w dó³)
+        isPressingS = Input.GetKey(KeyCode.S)
+                      || Input.GetButton("SlamDown")
+                      || Input.GetAxisRaw("Vertical") < -0.5f;
+
+        // 7. Flip sprite
+        if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
         {
-            dashCooldownTimer -= Time.deltaTime;
+            isFacingRight = !isFacingRight;
+            Vector3 s = transform.localScale;
+            s.x *= -1f;
+            transform.localScale = s;
         }
 
-        // Zwiêkszona grawitacja przy przytrzymaniu 'S'
-        isPressingS = Input.GetKey(KeyCode.S);
-
-        // Odwracanie kierunku sprite'a
-        Flip();
-
-        // Ustawianie parametrów Animatora
+        // 8. Animator
         isWalking = Mathf.Abs(horizontal) > 0.1f && grounded && !isDashing;
         animator.SetBool("isWalking", isWalking);
         animator.SetBool("isGrounded", grounded);
@@ -93,50 +101,28 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Zmiana grawitacji
+        // 9. Gravity
         rb.gravityScale = isPressingS ? increasedGravity : normalGravity;
 
-        // Ruch poziomy (wy³¹czony podczas dashu)
+        // 10. Movement (wy³¹czone podczas dashu)
         if (!isDashing)
-        {
             rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
-        }
     }
 
-    private bool IsGrounded()
-    {
-        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
-    }
-
-    private void Flip()
-    {
-        if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
-        {
-            isFacingRight = !isFacingRight;
-            Vector3 localScale = transform.localScale;
-            localScale.x *= -1f;
-            transform.localScale = localScale;
-        }
-    }
-
-    private System.Collections.IEnumerator Dash()
+    private IEnumerator Dash()
     {
         isDashing = true;
         dashCooldownTimer = dashCooldown;
-
-        // Start animacji dash
         animator.SetBool("isDashing", true);
 
-        float originalGravity = rb.gravityScale;
+        float origG = rb.gravityScale;
         rb.gravityScale = 0f;
-
-        float dashDirection = isFacingRight ? 1f : -1f;
-        rb.velocity = new Vector2(dashDirection * dashSpeed, 0f);
+        float dir = isFacingRight ? 1f : -1f;
+        rb.velocity = new Vector2(dir * dashSpeed, 0f);
 
         yield return new WaitForSeconds(dashDuration);
 
-        // Przywrócenie stanu po dashu
-        rb.gravityScale = originalGravity;
+        rb.gravityScale = origG;
         isDashing = false;
         animator.SetBool("isDashing", false);
     }
